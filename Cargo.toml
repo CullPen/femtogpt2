@@ -1,0 +1,91 @@
+[package]
+# --- Core Metadata ---
+name = "femto-gpt"
+version = "0.2.0" # Keep version updated as you release changes
+authors = ["Keyvan Kambakhsh <keyvankambakhsh@gmail.com>"] # Modern 'authors' key (plural)
+edition = "2021"
+description = "Minimal Rust library for training GPT language-models" # Keep concise
+license = "MIT" # Standard license identifier
+# Consider adding license-file = "LICENSE" if you have a LICENSE file in the root
+
+# --- Discoverability & Links ---
+readme = "README.md" # Explicitly point to the README
+repository = "https://github.com/keyvank/femtoGPT"
+homepage = "https://github.com/keyvank/femtoGPT" # Optional if same as repository
+keywords = ["gpt", "llm", "language-model", "machine-learning", "neural-network", "training"] # Helps discoverability on crates.io
+categories = ["science::machine-learning", "algorithms"] # Helps categorization on crates.io
+
+# --- Build & Compatibility ---
+# Consider specifying the Minimum Supported Rust Version (MSRV)
+# Run `cargo msrv` to find it, or set a reasonable minimum based on your dependencies/features.
+# rust-version = "1.65" # Example MSRV
+
+[dependencies]
+# --- Serialization ---
+bincode = "1.3.3" # For efficient binary serialization/deserialization
+serde = { version = "1.0", features = ["derive"] } # Core serialization framework
+
+# --- Command Line Interface (using clap v4+) ---
+# clap is the successor to structopt, integrating its derive features
+clap = { version = "4.4", features = ["derive"], default-features = false, optional = true } # Made optional, enable via feature if needed
+
+# --- Error Handling ---
+thiserror = "1.0" # For defining custom error types easily
+
+# --- Numerics & Randomness ---
+rand = "0.8.5" # Random number generation utilities
+rand_distr = "0.4.3" # Specific random distributions
+
+# --- Parallelism ---
+rayon = "1.8.0" # Data parallelism library (updated version)
+
+# --- Optional GPU Acceleration ---
+# ocl is kept optional, enabled via the 'gpu' feature
+ocl = { version = "0.19", optional = true } # OpenCL bindings
+
+[features]
+# Default features (if any, often empty)
+default = []
+
+# GPU acceleration feature
+gpu = ["dep:ocl"] # Enables the optional 'ocl' dependency
+
+# Command-line interface feature (if the CLI is optional)
+# If your library *always* includes CLI parsing, move clap back to [dependencies]
+# If only a binary uses it, consider a separate [[bin]] section or keep it optional.
+cli = ["dep:clap"]
+
+# Add other features as needed, e.g., specific backend choices
+
+[dev-dependencies]
+# Dependencies only needed for running tests, examples, or benchmarks
+# Example:
+# criterion = { version = "0.5", features = ["html_reports"] } # For benchmarking
+# assert_approx_eq = "1.1" # For float comparisons in tests
+
+[profile.release]
+# Optimize for performance and size in release builds
+lto = true           # Enable Link Time Optimization
+codegen-units = 1    # Maximize optimization opportunities (slower compile)
+strip = true         # Strip symbols from the binary (smaller size)
+# panic = 'abort'    # Optional: Abort on panic for smaller binary, no unwinding. Use cautiously.
+
+# Add Rust 1.74+ Lints configuration (Recommended)
+[lints.rust]
+# Deny warnings that are often problematic or indicate potential errors
+unsafe_code = "forbid"
+missing_docs = "warn" # Encourage documentation (can be 'allow' initially)
+# Add more based on project needs: non_ascii_idents, trivial_casts, etc.
+
+[lints.clippy]
+# Configure Clippy lints (powerful static analysis)
+pedantic = "warn" # Enable pedantic group (very strict, adjust as needed)
+nursery = "warn"  # Enable nursery group (new lints, potentially unstable)
+# Disable specific pedantic/nursery lints if they are too noisy or not applicable:
+# module_name_repetitions = "allow"
+# cast_possible_truncation = "allow"
+
+# --- Workspace ---
+# If this becomes part of a larger workspace, uncomment and configure:
+# [workspace]
+# members = ["subcrate1", "subcrate2"]
